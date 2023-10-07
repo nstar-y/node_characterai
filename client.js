@@ -171,56 +171,42 @@ class Client {
 
     // Creates a new character with the given options.
     async createNewCharacter(opts) {
-		if (!this.isAuthenticated())
-			throw Error("You must be authenticated to do this.");
+        if (!this.isAuthenticated()) throw Error("You must be authenticated to do this.");
 
-		let { title, name, description, greeting, visibility } = opts;
-		if (!title || !name || !description || !greeting || !visibility)
-			throw Error("Missing arguments");
-		if (
-			typeof title != "string" ||
-			typeof name != "string" ||
-			typeof description != "string" ||
-			typeof greeting != "string" ||
-			typeof visibility != "string"
-		)
-			throw Error("Invalid arguments.");
+	let { title, name, description, greeting, visibility } = opts;
+	if (!title || !name || !description || !greeting || !visibility) throw Error("Missing arguments");
+	if (typeof title != "string" || typeof name != "string" || typeof description != "string" || typeof greeting != "string" || typeof visibility != "string") throw Error("Invalid arguments.");
 
-		visibility = visibility.trim().toUpperCase();
-		if (
-			visibility != "PRIVATE" &&
-			visibility != "PUBLIC" &&
-			visibility != "UNLISTED"
-		)
-			throw Error(`Invalid visibility. Must be one of "PRIVATE", "PUBLIC", or "UNLISTED".`);
-		const options = {
-			title,
-			name,
-			description,
-			greeting,
-			visibility,
-			identifier: "id:" + uuidv4(),
-			// TODO: Add these options
-			categories: [],
-			copyable: false,
-			definition: "",
-			avatar_rel_path: "",
-			img_gen_enabled: false,
-			base_img_prompt: "",
-			strip_img_prompt_from_msg: false,
-			voice_id: "",
-		};
-		const request = await this.requester.request("https://beta.character.ai/chat/character/create/", {
-				body: Parser.stringify(options),
-				method: "POST",
-				headers: this.getHeaders(),
-			}
-		);
+	visibility = visibility.trim().toUpperCase();
+	if (visibility != "PRIVATE" && visibility != "PUBLIC" && visibility != "UNLISTED") throw Error(`Invalid visibility. Must be one of "PRIVATE", "PUBLIC", or "UNLISTED".`);
+	const options = {
+		title,
+		name,
+		description,
+		greeting,
+		visibility,
+		identifier: "id:" + uuidv4(),
+		// TODO: Add these options
+		categories: [],
+		copyable: false,
+		definition: "",
+		avatar_rel_path: "",
+		img_gen_enabled: false,
+		base_img_prompt: "",
+		strip_img_prompt_from_msg: false,
+		voice_id: "",
+	};
+	const request = await this.requester.request("https://beta.character.ai/chat/character/create/", {
+			body: Parser.stringify(options),
+			method: "POST",
+			headers: this.getHeaders(),
+		}
+	);
 
-		if (request.status() === 200) {
-			const response = await Parser.parseJSON(request);
-			return response;
-		} else Error("Could not create character.");
+	if (request.status() === 200) {
+		const response = await Parser.parseJSON(request);
+		return response;
+	} else Error("Could not create character.");
     }
 
     // Fetch speech from text using provided voice id
